@@ -206,9 +206,8 @@ export default class Sticky extends Component {
 
     if (!sticky) return {}
     return {
-      bottom,
-      top,
-      position: 'fixed',
+      marginBottom: bottom,
+      marginTop: top,
       width: this.triggerRect.width,
     }
   }
@@ -217,7 +216,7 @@ export default class Sticky extends Component {
   didReachContextBottom = () => {
     const { offset } = this.props
 
-    return (this.stickyRect.height + offset) >= this.contextRect.bottom
+    return this.stickyRect.height + offset >= this.contextRect.bottom
   }
 
   // Return true when the component reached the starting point
@@ -230,7 +229,7 @@ export default class Sticky extends Component {
   didTouchScreenBottom = () => {
     const { bottomOffset } = this.props
 
-    return (this.contextRect.bottom + bottomOffset) > window.innerHeight
+    return this.contextRect.bottom + bottomOffset > window.innerHeight
   }
 
   // Return true if the height of the component is higher than the window
@@ -302,13 +301,20 @@ export default class Sticky extends Component {
 
   render() {
     const { children, className } = this.props
+    const { sticky, bottom } = this.state
     const rest = getUnhandledProps(Sticky, this.props)
     const ElementType = getElementType(Sticky, this.props)
 
     return (
-      <ElementType {...rest} className={className}>
+      <ElementType {...rest} className={`${className || ''} ui ${sticky ? 'stuck-container' : ''}`}>
         <div ref={this.handleTriggerRef} />
-        <div ref={this.handleStickyRef} style={this.computeStyle()}>{children}</div>
+        <div
+          ref={this.handleStickyRef}
+          className={`ui sticky ${sticky ? `fixed ${bottom ? 'bottom' : 'top'}` : ''}`}
+          style={this.computeStyle()}
+        >
+          {children}
+        </div>
       </ElementType>
     )
   }
